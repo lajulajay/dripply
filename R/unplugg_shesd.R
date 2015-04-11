@@ -44,7 +44,7 @@ unplugg_shesd <- function(input_df, periodicity) {
     library(AnomalyDetection)
   }
   
-  # Format input content for AnomalyDetectionTs
+  # Format input according to periodicity and for AnomalyDetectionTs
   dates <- round_date(input_df$timestamp, periodicity)
   usage <- input_df$usage
   input_agg <- aggregate(usage ~ dates, FUN=sum)

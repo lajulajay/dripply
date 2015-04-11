@@ -34,13 +34,13 @@ unplugg_iqr <- function(input_df, periodicity) {
   usage <- input_df$usage
   input_agg <- aggregate(usage ~ dates, FUN=sum)
   
-  x <- input_agg$usage
-  x <- as.ts(x)
-  if(frequency(x)>1)
-    resid <- stl(x, s.window="periodic", robust=TRUE)$time.series[,3]
+  y <- input_agg$usage
+  y <- as.ts(y)
+  if(frequency(y)>1)
+    resid <- stl(y, s.window="periodic", robust=TRUE)$time.series[,3]
   else {
-    tt <- 1:length(x)
-    resid <- residuals(loess(x ~ tt))
+    tt <- 1:length(y)
+    resid <- residuals(loess(y ~ tt))
   }
   
   resid.q <- quantile(resid, prob=c(0.25, 0.75))
@@ -48,12 +48,12 @@ unplugg_iqr <- function(input_df, periodicity) {
   limits <- resid.q + 1.5*iqr*c(-1,1)
   score <- abs(pmin((resid - limits[1])/iqr, 0) + pmax((resid - limits[2])/iqr, 0))
   
-  plot(x,
-        xlab=NA,
-        ylab=paste(input_df$type[1], ' ', '(', input_df$units[1], ')'))
-  x2 <- ts(rep(NA,length(x)))
-  x2[score>0] <- x[score>0]
-  tsp(x2) <- tsp(x)
+  # Generate plot
+  plot(y, xaxt='n', xlab=NA, ylab=paste(input_df$type[1], ' ', '(', input_df$units[1], ')'))
+  axis.Date(side=1, input_agg$dates)
+  x2 <- ts(rep(NA,length(y)))
+  x2[score>0] <- y[score>0]
+  tsp(x2) <- tsp(y)
   points(x2, pch=19, col="red")
   
 }

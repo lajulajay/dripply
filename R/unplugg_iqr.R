@@ -15,6 +15,7 @@
 #'  
 #'  Estimates and subtracts trends and seasonal components of time series... 
 #'  Then finds outliers in the residuals: +/- 3IQR
+#'  Code is adapted from Rob Hyndman (Cross Validated forum) 
 #'  
 #'  Currently optimized for PGE data available through Opower
 #' 

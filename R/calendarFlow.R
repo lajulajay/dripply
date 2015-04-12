@@ -8,7 +8,7 @@
 #'  @param palette Optional string specifying color table to use for heatmap. Default is red.
 #'  @param main Optional title for calendar. Default is date range.
 #'   
-#'  Code is from Nathan Yau (@flowingdata)
+#'  Code is adapted from Nathan Yau (@flowingdata)
 #'  
 
 calendarFlow <- function(dates, values, date.form = "%Y-%m-%d", span=NA, palette="red", main=NA) {

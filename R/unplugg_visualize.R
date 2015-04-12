@@ -29,11 +29,24 @@ unplugg_visualize <- function(input_df) {
     barplot(t(rowsum(input_df$usage, format(input_df$timestamp,"%Y-%m"))), las=2, 
             ylab=input_df$units[1])
     
-    # display calendar heatmap
-    dates <- round_date(input_df$timestamp, 'day')
+    # display yearly calendar heatmap
+    dates <- lubridate::round_date(input_df$timestamp, 'day')
     usage <- input_df$usage
     input_agg <- aggregate(usage ~ dates, FUN=sum)
-    calendarFlow(input_agg$dates, input_agg$usage)
+    all_yrs <- unique(lubridate::year(input_agg$dates))
+    num_dys <- as.numeric(diff(range(input_agg$dates)))
+    
+    if(length(all_yrs) <= 2 && num_dys <= 366) {
+      calendarFlow(input_agg$dates, input_agg$usage)
+    } else {  
+        par(mfrow = c(2,2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0)) 
+        for(yr in all_yrs) {
+          input_sub <- subset(input_agg, format(dates,'%Y')==yr)
+          if(as.numeric(diff(range(input_sub$dates))) >= 15) {
+            calendarFlow(input_sub$dates, input_sub$usage)
+          }
+        }
+    }
     
   }
   

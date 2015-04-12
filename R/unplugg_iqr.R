@@ -34,13 +34,13 @@ unplugg_iqr <- function(input_df, periodicity) {
   usage <- input_df$usage
   input_agg <- aggregate(usage ~ dates, FUN=sum)
   
-  y <- input_agg$usage
-  y <- as.ts(y)
+  y <- as.ts(input_agg$usage)
+  y.frequency <- find.freq(y)
   if(frequency(y)>1)
-    resid <- stl(y, s.window="periodic", robust=TRUE)$time.series[,3]
+    resid <- stl(y^.5, s.window="periodic", robust=TRUE)$time.series[,3]
   else {
     tt <- 1:length(y)
-    resid <- residuals(loess(y ~ tt))
+    resid <- residuals(loess(y^.5 ~ tt))
   }
   
   resid.q <- quantile(resid, prob=c(0.25, 0.75))
@@ -49,11 +49,35 @@ unplugg_iqr <- function(input_df, periodicity) {
   score <- abs(pmin((resid - limits[1])/iqr, 0) + pmax((resid - limits[2])/iqr, 0))
   
   # Generate plot
-  plot(y, xaxt='n', xlab=NA, ylab=paste(input_df$type[1], ' ', '(', input_df$units[1], ')'))
-  axis.Date(side=1, input_agg$dates)
-  x2 <- ts(rep(NA,length(y)))
-  x2[score>0] <- y[score>0]
-  tsp(x2) <- tsp(y)
-  points(x2, pch=19, col="red")
+  plot(y, xaxt='n', xlab=NA, ylab=paste(input_df$type[1], ' ', '(', input_df$units[1], ')'))))
+  #axis.POSIXct(side=1, input_agg$dates, format='%Y-%m')  
+  y2 <- ts(rep(NA,length(y)))
+  y2[score>0] <- y[score>0]
+  tsp(y2) <- tsp(y)
+  points(y2, pch=19, col="red")
   
+}
+
+find.freq <- function(x)
+{
+  n <- length(x)
+  spec <- spec.ar(c(x),plot=FALSE)
+  if(max(spec$spec)>10) # Arbitrary threshold chosen by trial and error.
+  {
+    period <- round(1/spec$freq[which.max(spec$spec)])
+    if(period==Inf) # Find next local maximum
+    {
+      j <- which(diff(spec$spec)>0)
+      if(length(j)>0)
+      {
+        nextmax <- j[1] + which.max(spec$spec[j[1]:500])
+        period <- round(1/spec$freq[nextmax])
+      }
+      else
+        period <- 1
+    }
+  }
+  else
+    period <- 1
+  return(period)
 }

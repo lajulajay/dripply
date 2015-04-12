@@ -1,3 +1,16 @@
+#'  Calendar Heatmaps to Visualize Time Series Data
+#'
+#'  @name unplugg_sanitize
+#'  @param dates Vector of POSIXct dates.
+#'  @param values Vector of numeric values to be displayed as heatmap.
+#'  @param date.form Optional string to specify format of POSIXct dates. Default is "%Y-%m-%d".
+#'  @param span Optional numeric difference in data range.
+#'  @param palette Optional string specifying color table to use for heatmap. Default is red.
+#'  @param main Optional title for calendar. Default is date range.
+#'   
+#'  Code is from Nathan Yau (@flowingdata)
+#'  
+
 calendarFlow <- function(dates, values, date.form = "%Y-%m-%d", span=NA, palette="red", main=NA) {
     
     # Color palettes

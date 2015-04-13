@@ -21,11 +21,12 @@ unplugg_shesd <- function(input_df, periodicity) {
   
   # Check periodicity
   periodicity_options <- c('second', 'minute', 'hour', 'day', 'week', 'month', 'year')
-  if(is.character(periodicity)) {periodicity <- tolower(periodicity)}
-  else {
+  if(is.character(periodicity)) 
+    periodicity <- tolower(periodicity)
+  else
     stop('Periodicity must be string')
-  }
-  if(!(periodicity %in% periodicity_options)) {stop('Invalid periodicity')}
+  if(!(periodicity %in% periodicity_options)) 
+    stop('Invalid periodicity')
   
   # Install package(s) as necessary
   packages <- c('lubridate', 'devtools')

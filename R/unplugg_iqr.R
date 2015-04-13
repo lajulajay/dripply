@@ -35,19 +35,24 @@ unplugg_iqr <- function(input_df, periodicity) {
   usage <- input_df$usage
   input_agg <- aggregate(usage ~ dates, FUN=sum)
   
+  # Convert data into timeseries object
+  #		Find frequency (estimate of trends and seasonality)
+  #		Re-express data (as square root)
+  #		Calculate residuals of re-expressed data
   y <- as.ts(input_agg$usage)
   y.frequency <- find.freq(y)
   if(frequency(y)>1)
-    resid <- stl(y^.5, s.window="periodic", robust=TRUE)$time.series[,3]
+    res <- stl(y^.5, s.window="periodic", robust=TRUE)$time.series[,3]
   else {
     tt <- 1:length(y)
-    resid <- residuals(loess(y^.5 ~ tt))
+    res <- residuals(loess(y^.5 ~ tt))
   }
   
-  resid.q <- quantile(resid, prob=c(0.25, 0.75))
-  iqr <- diff(resid.q)
-  limits <- resid.q + 1.5*iqr*c(-1,1)
-  score <- abs(pmin((resid - limits[1])/iqr, 0) + pmax((resid - limits[2])/iqr, 0))
+  # Compute outlier score as 1.5IQR
+  res.q <- quantile(res, prob=c(0.25, 0.75))
+  iqr <- diff(res.q)
+  limits <- res.q + 1.5*iqr*c(-1,1)
+  score <- abs(pmin((res - limits[1])/iqr, 0) + pmax((res - limits[2])/iqr, 0))
   
   # Generate plot
   plot(y, xaxt='n', xlab=NA, ylab=paste(input_df$type[1], ' ', '(', input_df$units[1], ')'))))

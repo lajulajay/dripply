@@ -34,12 +34,13 @@ unplugg_visualize <- function(input_df) {
     usage <- input_df$usage
     input_agg <- aggregate(usage ~ dates, FUN=sum)
     all_yrs <- unique(lubridate::year(input_agg$dates))
+    num_yrs <- length(all_yrs)
     num_dys <- as.numeric(diff(range(input_agg$dates)))
     
-    if(length(all_yrs) <= 2 && num_dys <= 366) {
+    if(num_yrs <= 2 && num_dys <= 366) {
       calendarFlow(input_agg$dates, input_agg$usage)
     } else {  
-        par(mfrow = c(2,2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0)) 
+        par(mfrow = c(ceiling(num_yrs/2),2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0)) 
         for(yr in all_yrs) {
           input_sub <- subset(input_agg, format(dates,'%Y')==yr)
           if(as.numeric(diff(range(input_sub$dates))) >= 15) {

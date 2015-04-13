@@ -20,7 +20,8 @@ unplugg_visualize <- function(input_df) {
   library(lubridate)
   
   # need timestamps for most plots so check for it
-  if(!("timestamp" %in% colnames(input_df))) {stop('Missing TIMESTAMPS')}
+  if(!("timestamp" %in% colnames(input_df))) 
+    stop('Missing TIMESTAMPS')
   
   # if there are at least 6 months of data
   if(length(unique(months(input_df$timestamp))) >= 6) {
@@ -37,9 +38,9 @@ unplugg_visualize <- function(input_df) {
     num_yrs <- length(all_yrs)
     num_dys <- as.numeric(diff(range(input_agg$dates)))
     
-    if(num_yrs <= 2 && num_dys <= 366) {
+    if(num_yrs <= 2 && num_dys <= 366)
       calendarFlow(input_agg$dates, input_agg$usage)
-    } else {  
+    else {  
         par(mfrow = c(ceiling(num_yrs/2),2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0)) 
         for(yr in all_yrs) {
           input_sub <- subset(input_agg, format(dates,'%Y')==yr)

@@ -20,20 +20,27 @@ unplugg_sanitize <- function(input_df) {
   library(lubridate)
   
   # Ensure that all input columns are present
-  if(!is.data.frame(input_df)) {
+  if(!is.data.frame(input_df))
     stop('Input must be a data frame')
-  } else {
+   else {
     names(input_df) <- tolower(names(input_df))
-    if(!("type" %in% colnames(input_df))) {stop('Input must include TYPE')}
-    if(!("date" %in% colnames(input_df))) {stop('Input must include DATE')}
-    if(!("start.time" %in% colnames(input_df))) {stop('Input must include START TIME')}
-    if(!("usage" %in% colnames(input_df))) {stop('Input must include USAGE')}
-    if(!("units" %in% colnames(input_df))) {stop('Input must include UNITS')}
+    if(!("type" %in% colnames(input_df))) 
+      stop('Input must include TYPE')
+    if(!("date" %in% colnames(input_df))) 
+      stop('Input must include DATE')
+    if(!("start.time" %in% colnames(input_df))) 
+      stop('Input must include START TIME')
+    if(!("usage" %in% colnames(input_df))) 
+      stop('Input must include USAGE')
+    if(!("units" %in% colnames(input_df))) 
+      stop('Input must include UNITS')
   }
   
   # Ensure that input content is valid
-  if(!(all(input_df$type==input_df$type[[1]]))) {stop('Input entries must be same type')}
-  if(!(all(input_df$units==input_df$units[[1]]))) {stop('Input entries must be same units')}
+  if(!(all(input_df$type==input_df$type[[1]]))) 
+    stop('Input entries must be same type')
+  if(!(all(input_df$units==input_df$units[[1]]))) 
+    stop('Input entries must be same units')
   
   # Extract and append timestamp
   input_df$timestamp = parse_date_time(paste(input_df$date, ' ', input_df$start.time), 'mdy hm')
